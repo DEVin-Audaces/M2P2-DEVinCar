@@ -1,0 +1,7 @@
+C:\Users\Matheus\Desktop\M2P2-DEVinCar\M2P2-DEVinCar\obj\Debug\net6.0\M2P2-DEVinCar.csproj.AssemblyReference.cache
+C:\Users\Matheus\Desktop\M2P2-DEVinCar\M2P2-DEVinCar\obj\Debug\net6.0\M2P2-DEVinCar.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Matheus\Desktop\M2P2-DEVinCar\M2P2-DEVinCar\obj\Debug\net6.0\M2P2-DEVinCar.AssemblyInfoInputs.cache
+C:\Users\Matheus\Desktop\M2P2-DEVinCar\M2P2-DEVinCar\obj\Debug\net6.0\M2P2-DEVinCar.AssemblyInfo.cs
+C:\Users\Matheus\Desktop\M2P2-DEVinCar\M2P2-DEVinCar\obj\Debug\net6.0\M2P2-DEVinCar.csproj.CoreCompileInputs.cache
+C:\Users\Matheus\Desktop\M2P2-DEVinCar\M2P2-DEVinCar\obj\Debug\net6.0\M2P2-DEVinCar.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Matheus\Desktop\M2P2-DEVinCar\M2P2-DEVinCar\obj\Debug\net6.0\M2P2-DEVinCar.MvcApplicationPartsAssemblyInfo.cache
