@@ -14,6 +14,6 @@ namespace M2P2_DEVinCar.Context
         {
         }
         
-        public DbSet<CarModel> CarModels { get; set; }
+        public DbSet<Car> CarModels { get; set; }
     }
 }
