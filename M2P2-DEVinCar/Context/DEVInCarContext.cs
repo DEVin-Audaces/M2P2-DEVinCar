@@ -13,7 +13,10 @@ namespace M2P2_DEVinCar.Context
             :base(options)
         {
         }
+
+        public DbSet<User> Users { get; set;} 
         
-        public DbSet<CarModel> CarModel { get; set; }
+        public DbSet<CarModel> CarModel { get; set;}
+
     }
 }
