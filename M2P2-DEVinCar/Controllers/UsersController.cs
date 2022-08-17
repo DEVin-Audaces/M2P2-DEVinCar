@@ -9,13 +9,10 @@ namespace M2P2_DEVinCar.Controllers
     public class UsersController : ControllerBase
     {
         private DEVInCarContext _context;
-        private readonly ILogger<UsersController> _logger;
 
-        public UsersController(DEVInCarContext context
-            , ILogger<UsersController> logger)
+        public UsersController(DEVInCarContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
         /*[HttpGet]
