@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace M2P2_DEVinCar.Controllers
 {
-    [Route("api/Car")]
+    [Route("api/car")]
     [ApiController]
     public class CarsController : ControllerBase
     {
