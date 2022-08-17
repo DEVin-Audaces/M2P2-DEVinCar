@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using M2P2_DEVinCar.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace M2P2_DEVinCar.Context
 {
@@ -12,6 +13,7 @@ namespace M2P2_DEVinCar.Context
             :base(options)
         {
         }
-
+        
+        public DbSet<CarModel> CarModel { get; set; }
     }
 }
