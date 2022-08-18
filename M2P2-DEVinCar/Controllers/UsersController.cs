@@ -17,7 +17,14 @@ namespace M2P2_DEVinCar.Controllers {
             return new string[] { "value1", "value2" };
         }
 
-
+        /// <summary>
+        /// Retorna usuário
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>Retorna o usuário cadastrado no banco de dados</returns>
+        /// <response code="200">Retorna usuário</response>
+        /// <response code="404">Não encontrou o usuário pesquisado</response>
+        /// <response code="500">Ocorreu erro durante a execução</response>
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id) {
             try {
