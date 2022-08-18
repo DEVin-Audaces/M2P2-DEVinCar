@@ -1,18 +1,21 @@
 ﻿using M2P2_DEVinCar.Context;
+using M2P2_DEVinCar.Dtos;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace M2P2_DEVinCar.Controllers {
     [Route("api/user")]
     [ApiController]
     public class UsersController : ControllerBase {
         private DEVInCarContext _context;
+        private readonly ILogger<UsersController> _logger;
 
-        public UsersController(DEVInCarContext context) {
+        public UsersController(DEVInCarContext context, ILogger<UsersController> logger) {
             _context = context;
+            _logger = logger;
         }
 
-        /*[HttpGet]
+        [HttpGet]
         public IEnumerable<string> Get() {
             return new string[] { "value1", "value2" };
         }
@@ -28,17 +31,19 @@ namespace M2P2_DEVinCar.Controllers {
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id) {
             try {
-                var user = _context.Users.
-                    Where(x => x.Id == id).
-                    Select(x => new {
-                        x.Id,
-                        x.Name,
-                        x.BirthDate,
-                        x.Email,
-                    });
-                return user is not null ? Ok(user) : StatusCode(404);
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+                var newUserDto = new UserDto() {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                    BirthDate = user.BirthDate
+                };
+                
+                _logger.LogInformation($"Controller: {nameof(UsersController)} - Método: {nameof(Get)} - Id: {id}");
+                return newUserDto is not null ? Ok(newUserDto) : StatusCode(404);
             }
             catch (Exception e) {
+                _logger.LogError(e, $"Controller: {nameof(UsersController)} - Método: {nameof(Get)} - Id: {id}");
                 return StatusCode(500);
             }
         }
@@ -51,6 +56,6 @@ namespace M2P2_DEVinCar.Controllers {
 
         [HttpDelete("{id}")]
         public void Delete(int id) {
-        }*/
+        }
     }
 }
