@@ -8,11 +8,9 @@ namespace M2P2_DEVinCar.Controllers {
     [ApiController]
     public class UsersController : ControllerBase {
         private DEVInCarContext _context;
-        private readonly ILogger<UsersController> _logger;
 
-        public UsersController(DEVInCarContext context, ILogger<UsersController> logger) {
+        public UsersController(DEVInCarContext context) {
             _context = context;
-            _logger = logger;
         }
 
         [HttpGet]
@@ -39,11 +37,9 @@ namespace M2P2_DEVinCar.Controllers {
                     BirthDate = user.BirthDate
                 };
                 
-                _logger.LogInformation($"Controller: {nameof(UsersController)} - Método: {nameof(Get)} - Id: {id}");
                 return newUserDto is not null ? Ok(newUserDto) : StatusCode(404);
             }
             catch (Exception e) {
-                _logger.LogError(e, $"Controller: {nameof(UsersController)} - Método: {nameof(Get)} - Id: {id}");
                 return StatusCode(500);
             }
         }
