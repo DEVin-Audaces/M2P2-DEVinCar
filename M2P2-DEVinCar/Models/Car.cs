@@ -10,7 +10,7 @@ namespace M2P2_DEVinCar.Models {
         public string Name { get; set; }
         [Required]
         [Column("PrecoSugerido")]
-        [StringLength(18, MinimumLength = 2)]
+        [Range(9, 100000000000000000, ErrorMessage = "O campo SuggestedPrice deve ser entre 9 e 100000000000000000.")]
         public double SuggestedPrice { get; set; }
     }
 }
