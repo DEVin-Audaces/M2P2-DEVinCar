@@ -15,8 +15,8 @@ namespace M2P2_DEVinCar.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    PrecoSugerido = table.Column<double>(type: "float", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    SuggestedPrice = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
