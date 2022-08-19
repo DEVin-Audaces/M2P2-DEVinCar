@@ -91,8 +91,46 @@ namespace M2P2_DEVinCar.Controllers
                 _logger.LogError(e, $"Controller:{nameof(UsersController)}-Method:{nameof(PostSales)}");
                 return StatusCode(500);
             }
+            
+            
 
         }
+        
+        /// <summary>
+        /// Retorna uma lista de Vendas por SellerId.
+        /// </summary>
+        /// <param name="userId">ID do usuário(SelleId).</param>
+        /// <returns>Retorna um enumerador de Vendas cadastradas no banco de dados.</returns>
+        /// <response code="200">Retorno uma lista de Vendas.</response>
+        /// <response code="204">Não encontrou uma lista de Vendas por SelleId.</response>
+        /// <response code="500">Ocorreu exceção durante a consulta.</response>
+        [HttpGet("{userId}/sales")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<Sale>>> GetSales(int userId)
+        {
+            try
+            {
+                var sales = await _context.Sales.Where(x => x.SellerId == userId )
+                    .Include(x => x.Buyer)
+                    .Include(x => x.Seller)
+                    .ToListAsync();
+                
+                _logger.LogInformation($"Controller:{nameof(UsersController)}-Method:{nameof(GetSales)}");
+
+                return sales.Any() ? Ok(sales) : StatusCode(204);
+                
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Controller:{nameof(UsersController)}-Method:{nameof(GetSales)}");
+                return StatusCode(500);
+            }
+        }
+
+
 
     }
 }
