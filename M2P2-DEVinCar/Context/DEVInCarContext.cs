@@ -14,6 +14,20 @@ namespace M2P2_DEVinCar.Context
         {
         }
         public DbSet<Car> Cars { get; set; }
-        public DbSet<User> Users { get; set;} 
+        public DbSet<User> Users { get; set;}
+        public DbSet<Sale> Sales { get; set; }
+        public DbSet<SaleCar> SaleCars { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Sale>()
+                        .HasOne(r => r.Buyer)
+                        .WithMany()
+                        .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Sale>()
+                       .HasOne(r => r.Seller)
+                       .WithMany()
+                       .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }
