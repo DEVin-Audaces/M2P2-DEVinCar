@@ -45,6 +45,29 @@ namespace M2P2_DEVinCar.Migrations
                     b.ToTable("Cars");
                 });
 
+            modelBuilder.Entity("M2P2_DEVinCar.Models.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("StateId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StateId");
+
+                    b.ToTable("Cities");
+                });
+
             modelBuilder.Entity("M2P2_DEVinCar.Models.Sale", b =>
                 {
                     b.Property<int>("Id")
@@ -321,6 +344,17 @@ namespace M2P2_DEVinCar.Migrations
                         .IsUnique();
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("M2P2_DEVinCar.Models.City", b =>
+                {
+                    b.HasOne("M2P2_DEVinCar.Models.State", "State")
+                        .WithMany()
+                        .HasForeignKey("StateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("State");
                 });
 
             modelBuilder.Entity("M2P2_DEVinCar.Models.Sale", b =>
