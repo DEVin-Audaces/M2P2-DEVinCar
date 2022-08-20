@@ -1,5 +1,6 @@
 ﻿using M2P2_DEVinCar.Models;
 using Microsoft.EntityFrameworkCore;
+using M2P2_DEVinCar.Seeds;
 
 namespace M2P2_DEVinCar.Context
 {
@@ -28,6 +29,8 @@ namespace M2P2_DEVinCar.Context
                        .HasOne(r => r.Seller)
                        .WithMany()
                        .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<State>().HasData(StateSeed.StateSeeder);
         }
     }
 }
