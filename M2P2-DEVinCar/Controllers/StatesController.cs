@@ -45,7 +45,7 @@ namespace M2P2_DEVinCar.Controllers
                     return NotFound();
 
                 bool cityAlreadyExists = await _context.Cities
-                    .AnyAsync(city => city.Name == cityDto.Name 
+                    .AnyAsync(city => city.Name == cityDto.Name
                     && city.StateId == stateId);
 
                 if (cityAlreadyExists == true)
@@ -79,14 +79,55 @@ namespace M2P2_DEVinCar.Controllers
         especificados, retornando o Id da cidade criada, com o Status 201 (Created)
         */
 
-        /*[HttpGet]
-        public IEnumerable<string> Get()
+
+
+        // GET: api/<StatesController>
+        /// <summary>
+        /// Retorna uma lista de Estados
+        /// </summary>
+        /// <param name="name">Nome de algum estado</param>
+        /// <returns>Retorna Estado com o nome solicitado</returns>
+        /// <returns>Se não solicitado nome, retorna todos os estados.</returns>
+        /// <response code="200">Retorna uma lista de estados</response>
+        /// <response code="204">Não encontrou o estado</response>
+        /// <response code="500">Ocorreu erro durante a execução</response>
+
+        [HttpGet("name")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<State>>> GetState([FromQuery]string? name)
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+                
+
+                if (name != null)
+                {
+                    var stateName = await _context.States.FirstOrDefaultAsync(nameState => nameState.Name == name);
+
+                    _logger.LogInformation($"Controller: {nameof(StatesController)} = Metodo: {nameof(GetState)}");
+                        
+                    return stateName is not null ? Ok(stateName) : StatusCode(204);
+                }
+
+                var states = await _context.States.ToListAsync();
+
+                _logger.LogInformation($"Controller: {nameof(StatesController)} = Metodo: {nameof(GetState)}");
+
+                return states.Any() ? Ok(states) : StatusCode(200);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Controller: {nameof(StatesController)} = Metodo: {nameof(GetState)}");
+                return StatusCode(500);
+            }
+
+          
         }
 
 
-        [HttpGet("{id}")]
+        /*[HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
