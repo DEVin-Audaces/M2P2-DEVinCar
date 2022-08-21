@@ -71,14 +71,6 @@ namespace M2P2_DEVinCar.Controllers
             }
         }
 
-        /*
-        ● Caso não exista nenhum registro de Estado com o stateId enviado, deve ser retornado o Status de Erro 404 (Not Found)
-        ● Caso exista alguma outra cidade criada nesse estado com o mesmo nome enviado,
-        deve ser retornado o Status de Erro 400 (Bad Request)
-        ● Caso todas as validações passem, deve ser criada uma cidade com nome e estado
-        especificados, retornando o Id da cidade criada, com o Status 201 (Created)
-        */
-
         /*[HttpGet]
         public IEnumerable<string> Get()
         {
