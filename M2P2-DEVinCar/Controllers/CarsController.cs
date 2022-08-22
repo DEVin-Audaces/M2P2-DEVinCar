@@ -3,14 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using M2P2_DEVinCar.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace M2P2_DEVinCar.Controllers
-{
+namespace M2P2_DEVinCar.Controllers {
     [Route("api/car")]
     [ApiController]
-    public class CarsController : ControllerBase
-    {
+    public class CarsController : ControllerBase {
         private DEVInCarContext _context;
         private readonly ILogger<CarsController> _logger;
+        
         public CarsController(DEVInCarContext context, ILogger<CarsController> logger)
         {
             _context = context;
@@ -18,8 +17,7 @@ namespace M2P2_DEVinCar.Controllers
         }
 
         /*[HttpGet]
-        public IEnumerable<string> Get()
-        {
+        public IEnumerable<string> Get() {
             return new string[] { "value1", "value2" };
         }
         */
@@ -96,8 +94,7 @@ namespace M2P2_DEVinCar.Controllers
 
         /*
         [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+        public void Delete(int id) {
         }*/
     }
 }
