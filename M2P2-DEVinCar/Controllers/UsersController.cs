@@ -87,7 +87,7 @@ namespace M2P2_DEVinCar.Controllers
 
                 bool ValidatesPassword = Regex.IsMatch(user.Password, @"^(\w)\1*$");
                 if (ValidatesPassword)
-                    return BadReque
+                    return BadRequest();
 
 
                 if (Convert.ToDateTime(user.BirthDate).AddYears(18) > DateTime.Now)
