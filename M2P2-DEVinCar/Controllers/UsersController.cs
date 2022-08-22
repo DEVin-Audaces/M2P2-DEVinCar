@@ -3,6 +3,8 @@ using M2P2_DEVinCar.Dtos;
 using M2P2_DEVinCar.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using University.Dtos;
 
 namespace M2P2_DEVinCar.Controllers
@@ -12,9 +14,8 @@ namespace M2P2_DEVinCar.Controllers
     public class UsersController : ControllerBase {
         private readonly ILogger<UsersController> _logger;
         private DEVInCarContext _context;
-        private readonly ILogger<UsersController> _logger;
-
-
+       
+       
         public UsersController(DEVInCarContext context, ILogger<UsersController> logger)
         {
             _context = context;
@@ -24,6 +25,7 @@ namespace M2P2_DEVinCar.Controllers
         [HttpGet]
         public IEnumerable<string> Get() {
             return new string[] { "value1", "value2" };
+
         }
 
         /// <summary>
@@ -55,11 +57,52 @@ namespace M2P2_DEVinCar.Controllers
         }
 
 
+        /// <summary>
+        /// Inserir usuário
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>Retorna Id do usuário inserido</returns>
+        /// <response code = "201">Usuário inserido com sucesso</response>
+        /// <response code = "400">Inserção não realizada</response>
+        /// <response code = "500">Erro execução</response>
         [HttpPost]
-        public void Post([FromBody] string value) {
+
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> Post([FromBody] User user)
+        {
+            try
+            {
+                bool emailsExists = _context.Users.Any(x => x.Email == user.Email);
+                if (emailsExists)
+                    return BadRequest();
+
+                bool emailIsRight = new EmailAddressAttribute().IsValid(user.Email);
+                if (!emailIsRight)
+                    return BadRequest();
+
+                bool ValidatesPassword = Regex.IsMatch(user.Password, @"^(\w)\1*$");
+                if (ValidatesPassword)
+                    return BadReque
+
+
+                if (Convert.ToDateTime(user.BirthDate).AddYears(18) > DateTime.Now)
+                return BadRequest();
+
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+                return StatusCode(201, $"{user.Id}"); ;
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+
         }
 
-
+        /*
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
@@ -111,7 +154,7 @@ namespace M2P2_DEVinCar.Controllers
                 return StatusCode(500);
             }
         }
-        
+
         /// <summary>
         /// Insert vendas.
         /// </summary>
@@ -129,23 +172,23 @@ namespace M2P2_DEVinCar.Controllers
         {
             try
             {
-                var userIdSearch = await  _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
-            
-                if (userIdSearch is null)
-                    return StatusCode(404);    
-
-                userIdSearch = await  _context.Users.FirstOrDefaultAsync(x => x.Id == createSaleDTO.BuyerId);
+                var userIdSearch = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
 
                 if (userIdSearch is null)
-                    return StatusCode(404);    
-            
+                    return StatusCode(404);
+
+                userIdSearch = await _context.Users.FirstOrDefaultAsync(x => x.Id == createSaleDTO.BuyerId);
+
+                if (userIdSearch is null)
+                    return StatusCode(404);
+
                 Sale sale = new();
 
                 sale.BuyerId = createSaleDTO.BuyerId;
                 sale.SellerId = userId;
                 sale.SaleDate = createSaleDTO.SaleDate == null ? DateTime.Now : createSaleDTO.SaleDate;
 
-            
+
                 _context.Sales.Add(sale);
                 await _context.SaveChangesAsync();
 
@@ -158,8 +201,8 @@ namespace M2P2_DEVinCar.Controllers
                 _logger.LogError(e, $"Controller:{nameof(UsersController)}-Method:{nameof(PostSales)}");
                 return StatusCode(500);
             }
-            
-            
+
+
 
         }
 
@@ -179,15 +222,15 @@ namespace M2P2_DEVinCar.Controllers
         {
             try
             {
-                var sales = await _context.Sales.Where(x => x.SellerId == userId )
+                var sales = await _context.Sales.Where(x => x.SellerId == userId)
                     .Include(x => x.Buyer)
                     .Include(x => x.Seller)
                     .ToListAsync();
-                
+
                 _logger.LogInformation($"Controller:{nameof(UsersController)}-Method:{nameof(GetSales)}");
 
                 return sales.Any() ? Ok(sales) : StatusCode(204);
-                
+
 
             }
             catch (Exception e)
@@ -197,6 +240,6 @@ namespace M2P2_DEVinCar.Controllers
             }
         }
 
-        
+
     }
 }
