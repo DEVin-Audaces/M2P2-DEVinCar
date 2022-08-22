@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace M2P2_DEVinCar.Migrations
 {
     [DbContext(typeof(DEVInCarContext))]
-    [Migration("20220818160952_CreateCar")]
+    [Migration("20220819034612_CreateCar")]
     partial class CreateCar
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,12 +35,10 @@ namespace M2P2_DEVinCar.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("Nome");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<double>("SuggestedPrice")
-                        .HasColumnType("float")
-                        .HasColumnName("PrecoSugerido");
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
