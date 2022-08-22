@@ -71,17 +71,69 @@ namespace M2P2_DEVinCar.Controllers
             }
         }
 
-        /*
-        ● Caso não exista nenhum registro de Estado com o stateId enviado, deve ser retornado o Status de Erro 404 (Not Found)
-        ● Caso exista alguma outra cidade criada nesse estado com o mesmo nome enviado,
-        deve ser retornado o Status de Erro 400 (Bad Request)
-        ● Caso todas as validações passem, deve ser criada uma cidade com nome e estado
-        especificados, retornando o Id da cidade criada, com o Status 201 (Created)
-        */
+        /// <summary>
+        /// Adiciona um Endereço no banco de dados
+        /// </summary>
+        /// <param name="stateId">Id do Estado</param>
+        /// <param name="cityId">Id da Cidade</param>
+        /// <param name="addressDto">Dto do Endereço contento Id da cidade, rua, numero, cep e complemento(opcional)</param>
+        /// <returns>Retorna Endereço inserido com sucesso no banco de dados</returns>
+        /// <response code="201">Endereço criado com sucesso</response>
+        /// <response code="400">Cidade contém ID de estado inválido </response>
+        /// <response code="404">ID de cidade ou estado inválidos</response>
+        /// <response code="500">Ocorreu exceção durante a operação</response>
+        [HttpPost("{stateId}/city/{cityId}/address")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PostAddress(int stateId, int cityId, [FromBody] CreateAddressDto addressDto)
+        {
+            try
+            {
+                bool stateIsValid = await _context.States
+                    .AnyAsync(state => state.Id == stateId);
+
+                if (stateIsValid == false)
+                    return NotFound();
+
+                bool cityIsValid = await _context.Cities
+                    .AnyAsync(city => city.Id == cityId);
+
+                if (cityIsValid == false)
+                    return NotFound();
+
+                var city = await _context.Cities.FirstOrDefaultAsync(city => city.Id == cityId);
+                bool cityAndStateMatch = city.StateId == stateId;
+
+                if (cityAndStateMatch == false)
+                    return BadRequest();
+
+                Address address = new()
+                {
+                    CityId = cityId,
+                    Street = addressDto.Street,
+                    Number = (int)addressDto.Number,
+                    Cep = addressDto.Cep,
+                    Complement = addressDto.Complement
+                };
+
+                _context.Addresses.Add(address);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Controller:{nameof(StatesController)}-Method:{nameof(PostAddress)}");
 
 
+                return StatusCode(201, new { Id = address.Id });
 
-        // GET: api/<StatesController>
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Controller:{nameof(StatesController)}-Method:{nameof(PostAddress)}");
+                return StatusCode(500);
+            }
+        }
+
         /// <summary>
         /// Retorna uma lista de Estados
         /// </summary>
