@@ -147,6 +147,9 @@ namespace M2P2_DEVinCar.Controllers
         {
             try
             {
+                bool stateIsValid = await _context.States.AnyAsync(state => state.Id == stateId);
+                if (stateIsValid == false)
+                    return NotFound();
 
                 var cities = await _context.Cities.Where(x => x.StateId == stateId)
                     .Include(x => x.State)
