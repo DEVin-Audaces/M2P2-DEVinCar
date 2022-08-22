@@ -68,12 +68,10 @@ namespace M2P2_DEVinCar.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("Nome");
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<double>("SuggestedPrice")
-                        .HasColumnType("float")
-                        .HasColumnName("PrecoSugerido");
+                    b.Property<decimal>("SuggestedPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
