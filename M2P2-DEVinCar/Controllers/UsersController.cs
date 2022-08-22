@@ -29,6 +29,9 @@ namespace M2P2_DEVinCar.Controllers {
         /// <response code="404">Não encontrou o usuário pesquisado</response>
         /// <response code="500">Ocorreu erro durante a execução</response>
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(int id) {
             try {
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
