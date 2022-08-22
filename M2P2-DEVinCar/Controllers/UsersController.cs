@@ -11,29 +11,50 @@ namespace M2P2_DEVinCar.Controllers
 {
     [Route("api/user")]
     [ApiController]
-    public class UsersController : ControllerBase
-    {
-        private DEVInCarContext _context;
+    public class UsersController : ControllerBase {
         private readonly ILogger<UsersController> _logger;
-
+        private DEVInCarContext _context;
+       
+       
         public UsersController(DEVInCarContext context, ILogger<UsersController> logger)
         {
             _context = context;
             _logger = logger;
         }
 
-        /*[HttpGet]
-        public IEnumerable<string> Get()
-        {
+        [HttpGet]
+        public IEnumerable<string> Get() {
             return new string[] { "value1", "value2" };
-        }*/
 
-        /*
+        }
+
+        /// <summary>
+        /// Retorna usuário
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>Retorna o usuário cadastrado no banco de dados</returns>
+        /// <response code="200">Retorna usuário</response>
+        /// <response code="404">Não encontrou o usuário pesquisado</response>
+        /// <response code="500">Ocorreu erro durante a execução</response>
         [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }*/
+        public async Task<IActionResult> Get(int id) {
+            try {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+                var newUserDto = new UserDto() {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                    BirthDate = user.BirthDate
+                };
+
+                _logger.LogInformation($"Controller: {nameof(UsersController)} - Método: {nameof(Get)} - Id: {id}");
+                return newUserDto is not null ? Ok(newUserDto) : StatusCode(404);
+            }
+            catch (Exception e) {
+                _logger.LogError(e, $"Controller: {nameof(UsersController)} - Método: {nameof(Get)} - Id: {id}");
+                return StatusCode(500);
+            }
+        }
 
 
         /// <summary>
@@ -45,6 +66,7 @@ namespace M2P2_DEVinCar.Controllers
         /// <response code = "400">Inserção não realizada</response>
         /// <response code = "500">Erro execução</response>
         [HttpPost]
+
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -62,7 +84,8 @@ namespace M2P2_DEVinCar.Controllers
 
                 bool ValidatesPassword = Regex.IsMatch(user.Password, @"^(\w)\1*$");
                 if (ValidatesPassword)
-                    return BadRequest();
+                    return BadReque
+
 
                 if (Convert.ToDateTime(user.BirthDate).AddYears(18) > DateTime.Now)
                 return BadRequest();
