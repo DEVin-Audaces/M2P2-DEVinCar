@@ -178,6 +178,57 @@ namespace M2P2_DEVinCar.Controllers
           
         }
 
+        /// <summary>
+        /// Retorna uma lista de Cidades
+        /// </summary>
+        /// <param name="stateId">Id do estado</param>
+        /// <param name="CreateCityDto">DTO de cidade contendo apenas o nome</param>
+        /// <returns>Retorna Cidade cadastrada no banco de dados</returns>
+        /// <returns>Se não solicitado nome, retorna todas as cidades.</returns>
+        /// <response code="200">Retorna uma lista de ciddades</response>
+        /// <response code="204">Não encontrou a cidade</response>
+        /// <response code="404">Não encontrou o estado</response>
+        /// <response code="500">Ocorreu erro durante a execução</response>
+
+        [HttpGet("{stateId}/city")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<State>>> GetCity(int stateId, [FromQuery] string? name)
+        {
+            try
+            {
+                bool stateIsValid = await _context.States.AnyAsync(state => state.Id == stateId);
+                if (stateIsValid == false)
+                    return NotFound();
+
+                var cities = await _context.Cities.Where(x => x.StateId == stateId)
+                    .Include(x => x.State)
+                    .ToListAsync();
+
+                _logger.LogInformation($"Controller: {nameof(StatesController)} - Método: {nameof(GetCity)}");
+
+                if(name == null)
+                {
+                    return cities is not null ? Ok(cities) : StatusCode(404);
+                }
+
+
+                var city = cities.FirstOrDefault(y => y.Name == name);
+
+
+                return city is not null ? Ok(city) : StatusCode(204);
+
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation($"Controller: {nameof(StatesController)} - Método: {nameof(GetCity)}");
+                return StatusCode(500);
+            }
+        }
+
 
         /*[HttpGet("{id}")]
         public string Get(int id)
