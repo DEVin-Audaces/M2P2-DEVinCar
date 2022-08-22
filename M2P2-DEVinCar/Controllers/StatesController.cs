@@ -92,7 +92,7 @@ namespace M2P2_DEVinCar.Controllers
         /// <response code="204">Não encontrou o estado</response>
         /// <response code="500">Ocorreu erro durante a execução</response>
 
-        [HttpGet("name")]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -115,7 +115,7 @@ namespace M2P2_DEVinCar.Controllers
 
                 _logger.LogInformation($"Controller: {nameof(StatesController)} = Metodo: {nameof(GetState)}");
 
-                return states.Any() ? Ok(states) : StatusCode(200);
+                return states.Any() ? Ok(states) : StatusCode(204);
             }
             catch (Exception ex)
             {
