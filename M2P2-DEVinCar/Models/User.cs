@@ -1,10 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace M2P2_DEVinCar.Models
 {
- 
     public class User
     {
         public int Id { get; set; }
@@ -23,6 +20,7 @@ namespace M2P2_DEVinCar.Models
 
         [Required]
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{dd/MM/yyyy}")]    
         public DateTime BirthDate { get; set; }
     }
 }
