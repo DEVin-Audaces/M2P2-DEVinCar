@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace M2P2_DEVinCar.Models
 {
-    [Table("User")]
     [Index(nameof(Email), IsUnique = true)]
     public class User
     {

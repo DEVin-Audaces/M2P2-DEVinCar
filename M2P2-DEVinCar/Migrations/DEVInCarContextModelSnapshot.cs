@@ -133,7 +133,7 @@ namespace M2P2_DEVinCar.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("M2P2_DEVinCar.Models.Sale", b =>

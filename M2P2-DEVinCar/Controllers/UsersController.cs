@@ -1,7 +1,6 @@
 ﻿using M2P2_DEVinCar.Context;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace M2P2_DEVinCar.Controllers
 {
     [Route("api/user")]
