@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace M2P2_DEVinCar.Models
 {
- 
+
     public class User
     {
         public int Id { get; set; }
