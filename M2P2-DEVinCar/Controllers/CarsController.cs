@@ -9,8 +9,9 @@ namespace M2P2_DEVinCar.Controllers {
     public class CarsController : ControllerBase {
         private readonly ILogger<UsersController> _logger;
         private DEVInCarContext _context;
-
-        public CarsController(DEVInCarContext context, ILogger<UsersController> logger) {
+        
+        public CarsController(DEVInCarContext context, ILogger<CarsController> logger)
+        {
             _context = context;
             _logger = logger;
         }
@@ -21,25 +22,32 @@ namespace M2P2_DEVinCar.Controllers {
         }
         */
 
-        /*
+        /// <summary>
+        /// Retorna carro pesquisado
+        /// </summary>
+        /// <param name="car"></param>
+        /// <returns>Retorna carro cadastrado no banco de dados</returns>
+        /// <response code="200">Retorna carro</response>
+        /// <response code="404">Não encontrou carro pesquisado</response>
+        /// <response code="500">Ocorreu erro durante a execução</response>
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id) {
-            try {
-                var user = _context.Users.
-                    Where(x => x.Id == id).
-                    Select(x => new {
-                        x.Id,
-                        x.Name,
-                        x.BirthDate,
-                        x.Email,
-                    });
-                return user is not null ? Ok(user) : StatusCode(404);
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get(int id)
+        {
+            try
+            {
+                var car = await _context.Cars.FirstOrDefaultAsync(x => x.Id == id);
+                _logger.LogInformation($"Controller: {nameof(CarsController)} - Método: {nameof(Get)} - Id: {id}");
+                return car is not null ? Ok(car) : StatusCode(404);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Controller: {nameof(CarsController)} - Método: {nameof(Get)} - Id: {id}");
                 return StatusCode(500);
             }
         }
-        */
 
         /// <summary>
         /// Inserir um carro
