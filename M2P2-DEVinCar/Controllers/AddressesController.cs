@@ -133,51 +133,30 @@ namespace M2P2_DEVinCar.Controllers
         {
             try
             {
-                bool cityIdCheckNull = cityId == null;
-                bool stateIdCheckNull = stateId == null;
-                bool streetCheckNull = street == null;
-                bool cepCheckNull = cep == null;
-
-                bool checkAllNull = cityIdCheckNull && stateIdCheckNull && streetCheckNull && cepCheckNull;
-
                 IEnumerable<Address>? allAddresses = await _context.Addresses
                     .Include(address => address.City)
                     .Include(address => address.City.State)
                     .ToListAsync();
 
                 
+
+                if(cityId is not null)
+                   allAddresses = allAddresses.Where(address => address.CityId == cityId).ToList();
+                  
+                if(stateId is not null)
+                   allAddresses = allAddresses.Where(address => address.City.StateId == stateId).ToList();
+
+                if(street is not null)
+                   allAddresses = allAddresses.Where(address => address.Street == street).ToList();
+
+                if(cep is not null)
+                   allAddresses = allAddresses.Where(address => address.Cep == cep).ToList();
+
+
                 _logger.LogInformation($"Controller: {nameof(AddressesController)} - Método {nameof(Get)}");
 
-                if (checkAllNull)
-                    return Ok(allAddresses);
+                return allAddresses.Any() ? Ok(allAddresses) : NoContent();
 
-                if (streetCheckNull is false)
-                {
-                    var streetAddresses = allAddresses.Where(address => address.Street == street).ToList();
-                    return streetAddresses.Any() ? Ok(streetAddresses) : NoContent();
-                }
-
-                if (cityIdCheckNull is false)
-                {
-                    var cityAddresses = allAddresses.Where(address => address.CityId == cityId).ToList();
-                    return cityAddresses.Any() ? Ok(cityAddresses) : NoContent();
-                }
-                
-                if(stateIdCheckNull is false)
-                {
-                    var stateAddresses = allAddresses.Where(address => address.City.StateId == stateId).ToList();
-                    return stateAddresses.Any() ? Ok(stateAddresses) : NoContent();
-                }
-
-                if(cepCheckNull is false)
-                {
-                    var cepAddresses = allAddresses.Where(address => address.Cep == cep).ToList();
-                    return cepAddresses.Any() ? Ok(cepAddresses) : NoContent();
-                }
-
-
-                return NoContent();
-               
             }
             catch(Exception ex)
             {
