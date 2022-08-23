@@ -97,10 +97,51 @@ namespace M2P2_DEVinCar.Controllers
         //{
         //}
 
-        //// DELETE api/<AddressesController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+        /// <summary>
+        /// Remover Endereço
+        /// </summary>
+        /// <param name="id">Id Endereço</param>
+        /// <returns>Endereço excluído com sucesso do banco de dados</returns>
+        /// <response code="204">Endereço excluído com sucesso</response>
+        /// <response code="400">Exclusão não realizada pois endereço está relacionado a uma entrega</response>
+        /// <response code="404">Exclusão não realizada</response>
+        /// <response code="500">Ocorreu erro durante a execução</response>
+        [HttpDelete("{addressId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Delete(int addressId)
+        {
+            try
+            {
+                var address = await _context.Addresses.FirstOrDefaultAsync(x => x.Id == addressId);
+
+                if (address is null)
+                    return NotFound();
+                
+                bool isAddressInDelivery = true;
+
+                if (isAddressInDelivery)
+                    return BadRequest();
+
+                _context.Addresses.Remove(address);
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Controller: {nameof(AddressesController)} - Método {nameof(Delete)}");
+
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Controller: {nameof(AddressesController)} - Método {nameof(Delete)}");
+                return StatusCode(500);
+            }
+        }
+
+
+
+
     }
 }
