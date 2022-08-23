@@ -102,11 +102,39 @@ namespace M2P2_DEVinCar.Controllers
 
         }
 
-        /*
+        /// <summary>
+        /// Deleta usuário
+        /// </summary>
+        /// <param name="id">Id do usuário</param>
+        /// <returns>Retorna usuário deletado com sucesso no banco de dados.</returns>
+        /// <response code="204">Usuário deletado com sucesso.</response>
+        /// <response code="404">Usuário não encontrado</response>
+        /// <response code="500">Ocorreu exceção durante a inserção.</response>
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Delete(int id)
         {
-        }*/
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user == null) return NotFound();
+
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Controller: {nameof(UsersController)} " +
+                    $"- Método: {nameof(Delete)} - Id: {id}");
+                return StatusCode(204);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Controller: {nameof(UsersController)} " +
+                   $"- Método: {nameof(Delete)} - Id: {id}");
+                return StatusCode(500);
+            }
+        }
 
         /// <summary>
         /// Adiciona uma Venda no banco de dados.
