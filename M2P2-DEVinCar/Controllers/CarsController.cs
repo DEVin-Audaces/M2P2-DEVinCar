@@ -81,16 +81,23 @@ namespace M2P2_DEVinCar.Controllers {
 
 
                 _context.Cars.Add(car);
+
                 await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Class:{nameof(CarsController)}-Method:{nameof(Post)}");
+
                 return CreatedAtAction("get", new { id = car.Id }, car);
 
             }
             catch
             {
+                _logger.LogError($"Class:{nameof(CarsController)}-Method:{nameof(Post)}");
+
                 return StatusCode(500);
             }
 
         }
+
 
         /*
         [HttpDelete("{id}")]
