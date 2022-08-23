@@ -36,6 +36,9 @@ namespace M2P2_DEVinCar.Controllers
         /// <response code="404">Não encontrou o usuário pesquisado</response>
         /// <response code="500">Ocorreu erro durante a execução</response>
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(int id) {
             try {
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
@@ -65,7 +68,6 @@ namespace M2P2_DEVinCar.Controllers
         /// <response code = "400">Inserção não realizada</response>
         /// <response code = "500">Erro execução</response>
         [HttpPost]
-
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -92,10 +94,12 @@ namespace M2P2_DEVinCar.Controllers
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
+                _logger.LogInformation($"Controller: {nameof(UsersController)} - Método: {nameof(Post)} - Id: {user.Id}");
                 return StatusCode(201, $"{user.Id}"); ;
             }
-            catch
+            catch(Exception e)
             {
+                _logger.LogError(e, $"Controller:{nameof(UsersController)} - Method:{nameof(Post)}");
                 return StatusCode(500);
             }
 
