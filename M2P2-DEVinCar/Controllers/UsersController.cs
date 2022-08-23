@@ -10,21 +10,112 @@ namespace M2P2_DEVinCar.Controllers
 {
     [Route("api/user")]
     [ApiController]
-    public class UsersController : ControllerBase {
+    public class UsersController : ControllerBase
+    {
         private readonly ILogger<UsersController> _logger;
         private DEVInCarContext _context;
-       
-       
+
+
         public UsersController(DEVInCarContext context, ILogger<UsersController> logger)
         {
             _context = context;
             _logger = logger;
         }
 
-        [HttpGet]
-        public IEnumerable<string> Get() {
-            return new string[] { "value1", "value2" };
+        /// <summary>
+        /// Retorna os usuários que contém o nome enviado
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="birthDateMin"></param>
+        /// <param name="birthDateMax"></param>
+        /// <returns> Retorna os usuários com data maior que birthDateMin </returns>
+        /// <returns> Retorna os usuários com data menor que birthDateMax </returns>
+        /// <response code="204"> Caso não encontre resultado, retorna o Status 204 (No Content) </response>
+        /// <response code="200"> Caso seja encontrado ao menos um resultado, retorna Status 200 (OK)  </response>
+        /// <response code="500"> Em caso de erro na recuperação dos dados, retorna Status 500 </response>
 
+        [HttpGet()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get(string? name = null, DateTime? birthDateMin = null, DateTime? birthDateMax = null)
+        {
+            try
+            {
+                List<User> users;
+
+                List<UserDto> usersDto = new();
+
+                List<UserDto> TransformDataToDto(List<User> users)
+                {
+                    List<UserDto> usersDtos = new();
+                    users.ForEach(user =>
+                    {
+
+                        var newUser = new UserDto()
+                        {
+                            Id = user.Id,
+                            Name = user.Name,
+                            Email = user.Email,
+                            BirthDate = user.BirthDate
+                        };
+
+                        usersDtos.Add(newUser);
+                    });
+
+                    return usersDtos;
+                }
+
+                if (birthDateMin != null && birthDateMax != null && name != null)
+                {
+                    users = await _context.Users
+                        .Where(x => x.BirthDate > birthDateMin && x.BirthDate < birthDateMax && x.Name == name)
+                        .ToListAsync();
+                    usersDto = TransformDataToDto(users);
+                    _logger.LogInformation($"Controller:{nameof(UsersController)}-Method:{nameof(Get)}");
+                    if (usersDto != null) return Ok(usersDto);
+                    else return StatusCode(204);
+                }
+
+                if (name != null)
+                {
+                    users = await _context.Users.Where(x => x.Name == name).ToListAsync();
+                    usersDto = TransformDataToDto(users);
+                    _logger.LogInformation($"Controller:{nameof(UsersController)}-Method:{nameof(Get)}");
+                    if (usersDto != null) return Ok(usersDto);
+                    else return StatusCode(204);
+                }
+
+                if (birthDateMin != null)
+                {
+                    users = await _context.Users.Where(x => x.BirthDate > birthDateMin).ToListAsync();
+                    usersDto = TransformDataToDto(users);
+                    _logger.LogInformation($"Controller:{nameof(UsersController)}-Method:{nameof(Get)}");
+                    if (usersDto != null) return Ok(usersDto);
+                    else return StatusCode(204);
+                }
+
+                if (birthDateMax != null)
+                {
+                    users = await _context.Users.Where(x => x.BirthDate > birthDateMax).ToListAsync();
+                    usersDto = TransformDataToDto(users);
+                    _logger.LogInformation($"Controller:{nameof(UsersController)}-Method:{nameof(Get)}");
+                    if (usersDto != null) return Ok(usersDto);
+                    else return StatusCode(204);
+                }
+
+                users = await _context.Users.ToListAsync();
+                usersDto = TransformDataToDto(users);
+                _logger.LogInformation($"Controller:{nameof(UsersController)}-Method:{nameof(Get)}");
+                if (usersDto != null) return Ok(usersDto);
+                else return StatusCode(204);
+            }
+
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Controller:{nameof(UsersController)}-Method:{nameof(Get)}");
+                return StatusCode(500);
+            }
         }
 
         /// <summary>
@@ -39,10 +130,13 @@ namespace M2P2_DEVinCar.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Get(int id) {
-            try {
+        public async Task<IActionResult> Get(int id)
+        {
+            try
+            {
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
-                var newUserDto = new UserDto() {
+                var newUserDto = new UserDto()
+                {
                     Id = user.Id,
                     Name = user.Name,
                     Email = user.Email,
@@ -52,7 +146,8 @@ namespace M2P2_DEVinCar.Controllers
                 _logger.LogInformation($"Controller: {nameof(UsersController)} - Método: {nameof(Get)} - Id: {id}");
                 return newUserDto is not null ? Ok(newUserDto) : StatusCode(404);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 _logger.LogError(e, $"Controller: {nameof(UsersController)} - Método: {nameof(Get)} - Id: {id}");
                 return StatusCode(500);
             }
@@ -90,7 +185,7 @@ namespace M2P2_DEVinCar.Controllers
 
 
                 if (Convert.ToDateTime(user.BirthDate).AddYears(18) > DateTime.Now)
-                return BadRequest();
+                    return BadRequest();
 
 
                 _context.Users.Add(user);
