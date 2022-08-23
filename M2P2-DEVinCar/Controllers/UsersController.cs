@@ -239,6 +239,36 @@ namespace M2P2_DEVinCar.Controllers
             }
         }
 
+        /// <summary>
+        /// Retorna uma lista de Vendas por BuyerId.
+        /// </summary>
+        /// <param name="userId">ID do usuário(BuyerId).</param>
+        /// <returns>Retorna uma lista de Vendas cadastradas no banco de dados.</returns>
+        /// <response code="200">Retorna uma lista de Vendas de um determinado BuyerId.</response>
+        /// <response code="204">Não encontrou uma lista de Vendas de um determinado BuyerId.</response>
+        /// <response code="500">Ocorreu exceção durante a consulta.</response>
+        [HttpGet("{userId}/buy")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<Sale>>> GetBuyer(int userId)
+        {
+            try
+            {
+                var sales = await _context.Sales.Where(x => x.BuyerId == userId)
+                    .Include(x => x.Buyer)
+                    .Include(x => x.Seller)
+                    .ToListAsync();
 
+                _logger.LogInformation($"Controller:{nameof(UsersController)}-Method:{nameof(GetBuyer)}");
+
+                return sales.Any() ? Ok(sales) : StatusCode(204);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Controller:{nameof(UsersController)}-Method:{nameof(GetBuyer)}");
+                return StatusCode(500);
+            }
+        }
     }
 }
