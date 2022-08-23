@@ -71,32 +71,6 @@ namespace M2P2_DEVinCar.Controllers
             }
         }
 
-        //// GET: api/<AddressesController>
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        //// GET api/<AddressesController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        //// POST api/<AddressesController>
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
-
-        //// PUT api/<AddressesController>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-
         /// <summary>
         /// Remover Endereço
         /// </summary>
@@ -140,7 +114,78 @@ namespace M2P2_DEVinCar.Controllers
             }
         }
 
+        /// <summary>
+        /// Retorna lista de Endereços
+        /// </summary>
+        /// <param name="cityId">Id da Cidade</param>
+        /// <param name="stateId">Id do Estado</param>
+        /// <param name="street">Nome da rua</param>
+        /// <param name="cep">Cep do endereço</param>
+        /// <returns>Retorna lista de Endereços a partir do(s) parametro(s) especificado</returns>
+        /// <response code="200">Endereço(s) encontrado(s) com sucesso</response>
+        /// <response code="204">Endereço(s) não encontrado(s)</response>
+        /// <response code="500">Ocorreu erro durante a execução</response>
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get([FromQuery] int? cityId, int? stateId, string? street, string? cep)
+        {
+            try
+            {
+                bool cityIdCheckNull = cityId == null;
+                bool stateIdCheckNull = stateId == null;
+                bool streetCheckNull = street == null;
+                bool cepCheckNull = cep == null;
 
+                bool checkAllNull = cityIdCheckNull && stateIdCheckNull && streetCheckNull && cepCheckNull;
+
+                IEnumerable<Address>? allAddresses = await _context.Addresses
+                    .Include(address => address.City)
+                    .Include(address => address.City.State)
+                    .ToListAsync();
+
+                
+                _logger.LogInformation($"Controller: {nameof(AddressesController)} - Método {nameof(Get)}");
+
+                if (checkAllNull)
+                    return Ok(allAddresses);
+
+                if (streetCheckNull is false)
+                {
+                    var streetAddresses = allAddresses.Where(address => address.Street == street).ToList();
+                    return streetAddresses.Any() ? Ok(streetAddresses) : NoContent();
+                }
+
+                if (cityIdCheckNull is false)
+                {
+                    var cityAddresses = allAddresses.Where(address => address.CityId == cityId).ToList();
+                    return cityAddresses.Any() ? Ok(cityAddresses) : NoContent();
+                }
+                
+                if(stateIdCheckNull is false)
+                {
+                    var stateAddresses = allAddresses.Where(address => address.City.StateId == stateId).ToList();
+                    return stateAddresses.Any() ? Ok(stateAddresses) : NoContent();
+                }
+
+                if(cepCheckNull is false)
+                {
+                    var cepAddresses = allAddresses.Where(address => address.Cep == cep).ToList();
+                    return cepAddresses.Any() ? Ok(cepAddresses) : NoContent();
+                }
+
+
+                return NoContent();
+               
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, $"Controller: {nameof(AddressesController)} - Método {nameof(Get)}");
+
+                return StatusCode(500);
+            }
+        }
 
 
     }
