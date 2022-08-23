@@ -71,32 +71,6 @@ namespace M2P2_DEVinCar.Controllers
             }
         }
 
-        //// GET: api/<AddressesController>
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        //// GET api/<AddressesController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        //// POST api/<AddressesController>
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
-
-        //// PUT api/<AddressesController>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-
         /// <summary>
         /// Remover Endereço
         /// </summary>
@@ -140,7 +114,57 @@ namespace M2P2_DEVinCar.Controllers
             }
         }
 
+        /// <summary>
+        /// Retorna lista de Endereços
+        /// </summary>
+        /// <param name="cityId">Id da Cidade</param>
+        /// <param name="stateId">Id do Estado</param>
+        /// <param name="street">Nome da rua</param>
+        /// <param name="cep">Cep do endereço</param>
+        /// <returns>Retorna lista de Endereços a partir do(s) parametro(s) especificado</returns>
+        /// <response code="200">Endereço(s) encontrado(s) com sucesso</response>
+        /// <response code="204">Endereço(s) não encontrado(s)</response>
+        /// <response code="500">Ocorreu erro durante a execução</response>
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get([FromQuery] int? cityId, int? stateId, string? street, string? cep)
+        {
+            try
+            {
+                IEnumerable<Address>? allAddresses = await _context.Addresses
+                    .Include(address => address.City)
+                    .Include(address => address.City.State)
+                    .ToListAsync();
 
+                
+
+                if(cityId is not null)
+                   allAddresses = allAddresses.Where(address => address.CityId == cityId).ToList();
+                  
+                if(stateId is not null)
+                   allAddresses = allAddresses.Where(address => address.City.StateId == stateId).ToList();
+
+                if(street is not null)
+                   allAddresses = allAddresses.Where(address => address.Street == street).ToList();
+
+                if(cep is not null)
+                   allAddresses = allAddresses.Where(address => address.Cep == cep).ToList();
+
+
+                _logger.LogInformation($"Controller: {nameof(AddressesController)} - Método {nameof(Get)}");
+
+                return allAddresses.Any() ? Ok(allAddresses) : NoContent();
+
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, $"Controller: {nameof(AddressesController)} - Método {nameof(Get)}");
+
+                return StatusCode(500);
+            }
+        }
 
 
     }
