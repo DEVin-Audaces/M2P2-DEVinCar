@@ -7,7 +7,7 @@ namespace M2P2_DEVinCar.Controllers {
     [Route("api/car")]
     [ApiController]
     public class CarsController : ControllerBase {
-        private readonly ILogger<UsersController> _logger;
+        private readonly ILogger<CarsController> _logger;
         private DEVInCarContext _context;
         
         public CarsController(DEVInCarContext context, ILogger<CarsController> logger)
@@ -95,7 +95,6 @@ namespace M2P2_DEVinCar.Controllers {
         /// <returns>Retorna carro inserido</returns>
         /// <response code = "204">Carro deletado</response>
         /// <response code = "404">Deleção não realizada</response>
-        /// /// <response code = "400">Servidor não pode continuar</response>
         /// <response code = "500">Erro execução</response>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
