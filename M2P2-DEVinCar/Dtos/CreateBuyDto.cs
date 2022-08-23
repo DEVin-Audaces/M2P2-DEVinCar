@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace University.Dtos
+namespace M2P2_DEVinCar.Dtos
 {
     public class CreateBuyDto
     {
