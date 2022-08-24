@@ -33,8 +33,7 @@ namespace M2P2_DEVinCar.Controllers
         /// <response code="204"> Caso não encontre resultado, retorna o Status 204 (No Content) </response>
         /// <response code="200"> Caso seja encontrado ao menos um resultado, retorna Status 200 (OK)  </response>
         /// <response code="500"> Em caso de erro na recuperação dos dados, retorna Status 500 </response>
-
-        [HttpGet()]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -97,7 +96,7 @@ namespace M2P2_DEVinCar.Controllers
 
                 if (birthDateMax != null)
                 {
-                    users = await _context.Users.Where(x => x.BirthDate > birthDateMax).ToListAsync();
+                    users = await _context.Users.Where(x => x.BirthDate < birthDateMax).ToListAsync();
                     usersDto = TransformDataToDto(users);
                     _logger.LogInformation($"Controller:{nameof(UsersController)}-Method:{nameof(Get)}");
                     if (usersDto != null) return Ok(usersDto);
