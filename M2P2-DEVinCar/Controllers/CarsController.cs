@@ -16,11 +16,65 @@ namespace M2P2_DEVinCar.Controllers {
             _logger = logger;
         }
 
-        /*[HttpGet]
-        public IEnumerable<string> Get() {
-            return new string[] { "value1", "value2" };
+        /// <summary>
+        /// Retorna carros
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="priceMin"></param>
+        /// <param name="priceMax"></param>
+        /// <returns>Retorna carros cadastrados no banco de dados</returns>
+        /// <response code="200">Retorna carros</response>
+        /// <response code="204">Não encontrou nenhum carro com esses requisitos</response>
+        /// <response code = "400" >O priceMin é maior que o priceMax</response>
+        /// <response code="500">Ocorreu erro durante a execução</response>
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<Car>>> Get(string? name = null, decimal? priceMin = null, decimal? priceMax = null)
+        {
+            try
+            {
+                List<Car> cars = new();
+
+                if (priceMin > priceMax) 
+                {
+                    _logger.LogInformation($"Controller:{nameof(CarsController)}-Method:{nameof(Get)}");
+                    return StatusCode(400);
+                }
+
+                if (name != null && priceMax != null && priceMin != null)
+                {
+                    cars = await _context.Cars.Where(x => x.SuggestedPrice >= priceMin && x.SuggestedPrice <= priceMax && x.Name == name).ToListAsync();
+                    _logger.LogInformation($"Controller:{nameof(CarsController)}-Method:{nameof(Get)}");
+                    return cars.Count > 0 ? Ok(cars) : StatusCode(204);
+                }
+
+                if (name != null)
+                {
+                    cars = await _context.Cars.Where(x => x.Name == name).ToListAsync();
+                    _logger.LogInformation($"Controller:{nameof(CarsController)}-Method:{nameof(Get)}");
+                    return cars.Count > 0 ? Ok(cars) : StatusCode(204);
+                }
+
+                if (priceMin != null && priceMax != null)
+                {
+                    cars = await _context.Cars.Where(x => x.SuggestedPrice >= priceMin && x.SuggestedPrice <= priceMax).ToListAsync();
+                    _logger.LogInformation($"Controller:{nameof(CarsController)}-Method:{nameof(Get)}");
+                    return cars.Count > 0 ? Ok(cars) : StatusCode(204);
+                }
+
+                cars = await _context.Cars.ToListAsync();
+                _logger.LogInformation($"Controller:{nameof(CarsController)}-Method:{nameof(Get)}");
+                return cars.Any() ? Ok(cars) : StatusCode(204);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Controller:{nameof(CarsController)}-Method:{nameof(Get)}");
+                return StatusCode(500);
+            }
         }
-        */
 
         /// <summary>
         /// Retorna carro pesquisado
