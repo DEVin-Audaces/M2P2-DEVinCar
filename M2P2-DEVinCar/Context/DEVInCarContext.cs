@@ -21,6 +21,7 @@ namespace M2P2_DEVinCar.Context
         public DbSet<State> States { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<Delivery> Deliveries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
