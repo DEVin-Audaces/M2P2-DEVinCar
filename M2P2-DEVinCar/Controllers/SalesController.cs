@@ -28,7 +28,11 @@ namespace M2P2_DEVinCar.Controllers
         /// <response code="400">Preço unitário menor ou igual a zero.</response>
         /// <response code="500">Ocorreu exceção durante a consulta.</response>
         [HttpPatch("{saleId}/car/{carId}/price/{unitPrice}")]
-        public async Task<IActionResult> Patch(int saleId, int carId, decimal unitPrice)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PatchPrice(int saleId, int carId, decimal unitPrice)
         {
             try
             {
@@ -36,12 +40,8 @@ namespace M2P2_DEVinCar.Controllers
                 {
                     return StatusCode(400);
                 }
-                var _sales = await _context.Sales.FirstOrDefaultAsync(x => x.Id == saleId);
-
-                if (_sales is null)
-                    return StatusCode(404);
-
-                var _saleCar = await _context.SaleCars.Where(x => x.SaleId == _sales.Id && x.CarId == carId).FirstOrDefaultAsync();
+             
+                var _saleCar = await _context.SaleCars.FirstOrDefaultAsync(x => x.SaleId == saleId && x.CarId == carId);
 
                 if (_saleCar is null)
                     return StatusCode(404);
@@ -50,13 +50,13 @@ namespace M2P2_DEVinCar.Controllers
                 _context.Entry(_saleCar).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation($"Controller:{nameof(SalesController)}-Method:{nameof(Patch)}");
+                _logger.LogInformation($"Controller:{nameof(SalesController)}-Method:{nameof(PatchPrice)}");
 
                 return NoContent();
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"Controller:{nameof(SalesController)}-Method:{nameof(Patch)}");
+                _logger.LogError(e, $"Controller:{nameof(SalesController)}-Method:{nameof(PatchPrice)}");
                 return StatusCode(500);
             }
 
