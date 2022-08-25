@@ -101,6 +101,32 @@ namespace M2P2_DEVinCar.Migrations
                     b.ToTable("Cities");
                 });
 
+            modelBuilder.Entity("M2P2_DEVinCar.Models.Delivery", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeliveryForecast")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SaleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("SaleId");
+
+                    b.ToTable("Deliveries");
+                });
+
             modelBuilder.Entity("M2P2_DEVinCar.Models.Sale", b =>
                 {
                     b.Property<int>("Id")
@@ -396,6 +422,25 @@ namespace M2P2_DEVinCar.Migrations
                         .IsRequired();
 
                     b.Navigation("State");
+                });
+
+            modelBuilder.Entity("M2P2_DEVinCar.Models.Delivery", b =>
+                {
+                    b.HasOne("M2P2_DEVinCar.Models.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("M2P2_DEVinCar.Models.Sale", "Sale")
+                        .WithMany()
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Sale");
                 });
 
             modelBuilder.Entity("M2P2_DEVinCar.Models.Sale", b =>
