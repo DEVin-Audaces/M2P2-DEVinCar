@@ -24,9 +24,11 @@ namespace M2P2_DEVinCar.Controllers
         /// </summary>
         /// <param name="stateId">ID do estado</param
         /// <returns>Retorna um estado localizado pelo ID no banco de dados</returns>
+        /// <response code="200">Retorna o estado com o ID pesquisado</response>
         /// <response code="404">ID de estado inválido</response>
         /// <response code="500">Ocorreu exceção durante a operação</response>
         [HttpGet("{stateId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<State>> GetState(int stateId)
@@ -38,7 +40,9 @@ namespace M2P2_DEVinCar.Controllers
                 if (stateResult == null)
                     return NotFound();
 
-                return stateResult;
+                _logger.LogInformation($"Controller:{nameof(StatesController)}-Method:-{nameof(GetState)}");
+
+                return Ok(stateResult);
 
             }
             catch (Exception ex)
