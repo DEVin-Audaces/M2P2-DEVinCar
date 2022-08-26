@@ -244,7 +244,7 @@ namespace M2P2_DEVinCar.Controllers
 
                 if(name == null)
                 {
-                    return cities is not null ? Ok(cities) : StatusCode(404);
+                    return cities is not null ? Ok(cities) : NoContent();
                 }
 
 
