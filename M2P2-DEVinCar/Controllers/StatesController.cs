@@ -20,6 +20,39 @@ namespace M2P2_DEVinCar.Controllers
         }
 
         /// <summary>
+        /// Localiza um estado no banco de dados.
+        /// </summary>
+        /// <param name="stateId">ID do estado</param
+        /// <returns>Retorna um estado localizado pelo ID no banco de dados</returns>
+        /// <response code="200">Retorna o estado com o ID pesquisado</response>
+        /// <response code="404">ID de estado inválido</response>
+        /// <response code="500">Ocorreu exceção durante a operação</response>
+        [HttpGet("{stateId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<State>> GetState(int stateId)
+        {
+            try
+            {
+                var stateResult = await _context.States.FirstOrDefaultAsync(state => state.Id == stateId);
+
+                if (stateResult == null)
+                    return NotFound();
+
+                _logger.LogInformation($"Controller:{nameof(StatesController)}-Method:-{nameof(GetState)}");
+
+                return Ok(stateResult);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Controller:{nameof(StatesController)}-Method:-{nameof(GetState)}");
+                return StatusCode(500);
+            }
+        }
+
+        /// <summary>
         /// Adiciona uma Cidade no banco de dados.
         /// </summary>
         /// <param name="stateId">ID do estado</param>
