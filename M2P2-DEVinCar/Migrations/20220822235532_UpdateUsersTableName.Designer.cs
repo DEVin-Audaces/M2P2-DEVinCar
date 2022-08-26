@@ -4,6 +4,7 @@ using M2P2_DEVinCar.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace M2P2_DEVinCar.Migrations
 {
     [DbContext(typeof(DEVInCarContext))]
-    partial class DEVInCarContextModelSnapshot : ModelSnapshot
+    [Migration("20220822235532_UpdateUsersTableName")]
+    partial class UpdateUsersTableName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,32 +101,6 @@ namespace M2P2_DEVinCar.Migrations
                     b.HasIndex("StateId");
 
                     b.ToTable("Cities");
-                });
-
-            modelBuilder.Entity("M2P2_DEVinCar.Models.Delivery", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AddressId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeliveryForecast")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SaleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AddressId");
-
-                    b.HasIndex("SaleId");
-
-                    b.ToTable("Deliveries");
                 });
 
             modelBuilder.Entity("M2P2_DEVinCar.Models.Sale", b =>
@@ -422,25 +398,6 @@ namespace M2P2_DEVinCar.Migrations
                         .IsRequired();
 
                     b.Navigation("State");
-                });
-
-            modelBuilder.Entity("M2P2_DEVinCar.Models.Delivery", b =>
-                {
-                    b.HasOne("M2P2_DEVinCar.Models.Address", "Address")
-                        .WithMany()
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("M2P2_DEVinCar.Models.Sale", "Sale")
-                        .WithMany()
-                        .HasForeignKey("SaleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Address");
-
-                    b.Navigation("Sale");
                 });
 
             modelBuilder.Entity("M2P2_DEVinCar.Models.Sale", b =>
