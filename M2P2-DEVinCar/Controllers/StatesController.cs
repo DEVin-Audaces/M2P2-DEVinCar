@@ -148,6 +148,7 @@ namespace M2P2_DEVinCar.Controllers
             try
             {
                 bool stateIsValid = await _context.States.AnyAsync(state => state.Id == stateId);
+
                 if (stateIsValid == false)
                     return NotFound();
 
@@ -159,14 +160,14 @@ namespace M2P2_DEVinCar.Controllers
 
                 if(name == null)
                 {
-                    return cities is not null ? Ok(cities) : StatusCode(404);
+                    return cities is not null ? Ok(cities) : NoContent();
                 }
 
 
                 var city = cities.FirstOrDefault(y => y.Name == name);
 
 
-                return city is not null ? Ok(city) : StatusCode(204);
+                return city is not null ? Ok(city) : StatusCode(200);
 
 
             }
