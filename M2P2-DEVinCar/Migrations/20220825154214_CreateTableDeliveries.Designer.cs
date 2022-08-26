@@ -4,6 +4,7 @@ using M2P2_DEVinCar.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace M2P2_DEVinCar.Migrations
 {
     [DbContext(typeof(DEVInCarContext))]
-    partial class DEVInCarContextModelSnapshot : ModelSnapshot
+    [Migration("20220825154214_CreateTableDeliveries")]
+    partial class CreateTableDeliveries
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

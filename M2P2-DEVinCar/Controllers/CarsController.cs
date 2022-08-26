@@ -88,8 +88,9 @@ namespace M2P2_DEVinCar.Controllers {
             catch
             {
                 _logger.LogError($"Class:{nameof(CarsController)}-Method:{nameof(Post)}");
+
                 return StatusCode(500);
-            }
+                }
 
         }
 

@@ -7,11 +7,11 @@ namespace M2P2_DEVinCar.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Campo Name de preenchimento obrigatório")]
         [StringLength(100)]
         public string Name { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Campo Initials de preenchimento obrigatório")]
         [StringLength(2)]
         public string Initials { get; set; }
 
