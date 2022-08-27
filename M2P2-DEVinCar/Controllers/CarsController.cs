@@ -94,6 +94,55 @@ namespace M2P2_DEVinCar.Controllers {
 
         }
 
+        /// <summary>
+        /// Atualizar Carro
+        /// </summary>
+        /// <param name="car">Aluno</param>
+        /// <returns>Retorna carro atualizado com sucesso no banco de dados</returns>
+        /// <response code="204">Carro atualizado com sucesso</response>
+        /// <response code="404">Atualização não realizada</response>
+        /// <response code="500">Ocorreu erro durante a execução</response>
+        [HttpPut("{carId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Put(int carId, [FromBody] Car car)
+        {
+            try
+            {   
+                bool carExist = _context.Cars.Any(x => x.Id == carId);
+
+                if (!carExist)
+                    return StatusCode(404);
+
+                bool carNameRepeat = _context.Cars.Any(x => x.Id != carId && x.Name == car.Name);
+                bool carNameValid = car.Name.Length > 0;
+                bool carPriceValid = car.SuggestedPrice > 0;
+
+                if (!carNameValid || !carPriceValid || carNameRepeat)
+                {
+                    return StatusCode(400);
+                }
+
+                car.Id = carId;
+
+                _context.Update(car);
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Class:{nameof(CarsController)}-Method:{nameof(Put)}");
+
+                return StatusCode(204);
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Class:{nameof(CarsController)}-Method:{nameof(Put)}");
+
+                return StatusCode(500);
+            }
+        }
+
 
         /// <summary>
         /// Inserir aluno
