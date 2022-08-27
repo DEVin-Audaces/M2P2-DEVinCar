@@ -262,23 +262,52 @@ namespace M2P2_DEVinCar.Controllers
             }
         }
 
-
-        /*[HttpGet("{id}")]
-        public string Get(int id)
+        
+        /// <summary>
+        /// Retorna uma Cidade
+        /// </summary>
+        /// <param name="stateId">ID do estado</param>
+        /// <param name="cityId">ID da cidade</param>
+        /// <returns>Retorna Cidade com o ID pesquisado</returns>
+        /// <response code="200">Retorna Cidade</response>
+        /// <response code="400">Não foi encontrada Cidade com esse ID de Estado</response>
+        /// <response code="404">ID de Cidade e/ou ID de Estado não encontrados</response>
+        /// <response code="500">Ocorreu erro durante a execução</response>
+        [HttpGet("{stateId}/city/{cityId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<City>> GetCityById(int stateId, int cityId)
         {
-            return "value";
+            try 
+	        {	
+		        bool stateIsvalid = await _context.States.AnyAsync(state => state.Id == stateId);
+                bool cityIsvalid = await _context.Cities.AnyAsync(city => city.Id == cityId);
+
+                if (stateIsvalid == false || cityIsvalid == false)
+                    return NotFound();
+
+                List<City> cities = await _context.Cities
+                    .Include(City => City.State)
+                    .ToListAsync();
+
+
+                City city = cities.FirstOrDefault(y => y.Id == cityId);
+
+                if (city.StateId != stateId)
+                    return BadRequest();
+
+                _logger.LogInformation($"Controller: {nameof(StatesController)} - Método: {nameof(GetCityById)}");
+                return Ok(city);
+	        }
+	        catch (Exception e)
+	        {
+
+	            _logger.LogError(e, $"Controller: {nameof(StatesController)} - Método: {nameof(GetCityById)}");
+                return StatusCode(500);
+	        }
         }
-
-
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }*/
     }
+
 }
