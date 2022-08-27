@@ -1,3 +1,5 @@
+using M2P2_DEVinCar.Dtos;
+using M2P2_DEVinCar.Models;
 using M2P2_DEVinCar.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +19,77 @@ namespace M2P2_DEVinCar.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Cadastra venda de carro.
+        /// </summary>
+        /// <param name="saleId"></param>
+        /// <param name="createSaleCar"></param>
+        /// <returns>Retorna venda de carro</returns>
+        /// <response code="201">Retorna o Id do saleCar criado.</response>
+        /// <response code="400">Atributo CarId não enviado e UnitPrice ou um Amount <= 0.</response>
+        /// <response code="404">Atributo CarId ou SaleId não existe.</response>
+        /// <response code="500">Erro durante a execução.</response>
+
+        [HttpPost("{saleId}/item")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<SaleCar>> PostSaleCar(int saleId, [FromBody] CreateSaleCarDto createSaleCar)
+        {
+            try
+            {
+                var saleIdSearch = await _context.Sales.FirstOrDefaultAsync(x => x.Id == saleId);
+
+                if (saleIdSearch is null)
+                    return StatusCode(404);
+
+                var carIdSearch = await _context.Cars.FirstOrDefaultAsync(x => x.Id == createSaleCar.CarId);
+
+                if (carIdSearch is null)
+                    return StatusCode(404);
+
+                if (createSaleCar.CarId is null)
+                    return BadRequest();
+
+                if (createSaleCar.UnitPrice <= 0 || createSaleCar.Amount <= 0)
+                    return BadRequest();
+
+                if (createSaleCar.UnitPrice is null)
+                {
+                    var cars = await _context.Cars.FirstOrDefaultAsync(x => x.Id == createSaleCar.CarId);
+
+                    createSaleCar.UnitPrice = cars.SuggestedPrice;
+                }
+
+                if (createSaleCar.Amount is null)
+                {
+                    createSaleCar.Amount = 1;
+                }
+
+                SaleCar saleCar = new();
+
+                saleCar.SaleId = saleId;
+                saleCar.CarId = (int)createSaleCar.CarId;
+                saleCar.UnitPrice = (decimal)createSaleCar.UnitPrice;
+                saleCar.Amount = (int)createSaleCar.Amount;
+
+                _context.SaleCars.Add(saleCar);
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Controller: {nameof(SalesController)} - Method: {nameof(PostSaleCar)}");
+
+                return saleCar is null ? StatusCode(404) : StatusCode(201, $"{saleCar.Id}");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Controller: {nameof(SalesController)} - Method: {nameof(PostSaleCar)}");
+
+                return StatusCode(500);
+            }
+        }
+        
         /// <summary>
         /// Atualizar o preço unitário, através do ID da venda e do carro.
         /// </summary>
