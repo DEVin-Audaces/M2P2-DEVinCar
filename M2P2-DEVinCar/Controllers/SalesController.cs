@@ -20,6 +20,65 @@ namespace M2P2_DEVinCar.Controllers
             _context = context;
             _logger = logger;
         }
+        
+        /// <summary>
+        /// Retorna vendas por id 
+        /// </summary>
+        /// <param name="saleId">Id da venda.</param>
+        /// <returns>Retorna as informações de venda</returns>
+        /// <response code="200">Retorna venda</response>
+        /// <response code="404">Não encontrou a venda pesquisada</response>
+        /// <response code="500">Ocorreu erro durante a execução</response>
+        [HttpGet("{saleId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get(int saleId)
+        {
+            try
+            {
+                
+                var _sale = await _context.Sales.FirstOrDefaultAsync(x => x.Id == saleId);
+
+                if (_sale is null)
+                    return StatusCode(404);
+                
+                var _userBuyer = await _context.Users.FirstOrDefaultAsync(x => x.Id == _sale.BuyerId);
+                var _userSeller = await _context.Users.FirstOrDefaultAsync(x => x.Id == _sale.SellerId);
+
+                var _saleDto = new SalesDto()
+                {
+                    Id = _sale.Id,
+                    NameBuyer = _userBuyer.Name,
+                    NameSeller = _userSeller.Name,
+                    SaleDate = _sale.SaleDate,
+                    listSale = new List<ItemSaleDto>()
+                };
+
+                var _salesCar = await _context.SaleCars.Where(x => x.SaleId == _sale.Id).ToListAsync();
+
+                
+                foreach (SaleCar saleCar in _salesCar)
+                {
+                    ItemSaleDto itemSale = new();
+                    var car = await _context.Cars.FirstOrDefaultAsync(x => x.Id == saleCar.CarId);
+                    itemSale.NameProduct = car.Name;
+                    itemSale.UnitPrice = saleCar.UnitPrice;
+                    itemSale.Amount = saleCar.Amount;
+                    itemSale.Total = (saleCar.UnitPrice * saleCar.Amount);
+                    _saleDto.listSale.Add(itemSale);
+                }
+                
+                _logger.LogInformation($"Controller: {nameof(SalesController)} - Método: {nameof(Get)} - Id: {saleId}");
+                return Ok(_saleDto);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Controller: {nameof(SalesController)} - Método: {nameof(Get)} - Id: {saleId}");
+                return StatusCode(500);
+            }
+        }
+
 
         /// <summary>
         /// Cadastra venda de carro.
