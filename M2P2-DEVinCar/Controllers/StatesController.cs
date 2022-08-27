@@ -257,7 +257,7 @@ namespace M2P2_DEVinCar.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogInformation($"Controller: {nameof(StatesController)} - Método: {nameof(GetCity)}");
+                _logger.LogError(e, $"Controller: {nameof(StatesController)} - Método: {nameof(GetCity)}");
                 return StatusCode(500);
             }
         }
