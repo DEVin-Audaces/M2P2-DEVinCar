@@ -1,6 +1,8 @@
 using M2P2_DEVinCar.Dtos;
 using M2P2_DEVinCar.Models;
 using M2P2_DEVinCar.Context;
+using M2P2_DEVinCar.Dtos;
+using M2P2_DEVinCar.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -182,6 +184,61 @@ namespace M2P2_DEVinCar.Controllers
                 return StatusCode(500);
             }
         }
+        /// <summary>
+        /// Cadastra entrega.
+        /// </summary>
+        /// <param name="saleId">ID da venda.</param>
+        /// <param name="createDeliveryDTO">DTO de delivery com AddressId e DeliveryForecast.</param>
+        /// <returns>Retorna entrega inserida com sucesso no banco de dados.</returns>
+        /// <response code="201">Entrega inserida com sucesso.</response>
+        /// <response code="400">Inserção não realizada.</response>
+        /// <response code="404">Inserção não realizada ou AddressId/saleId não encontrado no banco de dados.</response>
+        /// <response code="500">Ocorreu exceção durante a inserção.</response>
+        [HttpPost("{saleId}/deliver")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PostDeliver(int saleId, [FromBody] CreateDeliveryDto createDeliveryDTO)
+        {
+            try
+            {
+                var saleIdSearch = await _context.Sales.FirstOrDefaultAsync(x => x.Id == saleId);
 
+                if (saleIdSearch is null)
+                    return StatusCode(404);
+
+                var addressIdSearch = await _context.Addresses.FirstOrDefaultAsync(x => x.Id == createDeliveryDTO.AddressId);
+
+                if (addressIdSearch is null)
+                    return StatusCode(404);
+
+                if (createDeliveryDTO.AddressId is null)
+                    return StatusCode(400);
+
+                if (createDeliveryDTO.DeliveryForecast < DateTime.Now)
+                    return StatusCode(400);
+
+
+                Delivery deliver = new();
+
+                deliver.AddressId = (int)createDeliveryDTO.AddressId;
+                deliver.SaleId = saleId;
+                deliver.DeliveryForecast = createDeliveryDTO.DeliveryForecast == null ? DateTime.Now.AddDays(7) : createDeliveryDTO.DeliveryForecast;
+
+
+                _context.Deliveries.Add(deliver);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Controller:{nameof(SalesController)}-Method:{nameof(PostDeliver)}");
+
+                return StatusCode(201);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Controller:{nameof(SalesController)}-Method:{nameof(PostDeliver)}");
+                return StatusCode(500);
+            }
+        }
     }
 }
