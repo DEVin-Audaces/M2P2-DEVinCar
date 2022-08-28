@@ -35,6 +35,8 @@ namespace M2P2_DEVinCar.Context
                        .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<State>().HasData(StateSeed.StateSeeder);
+            modelBuilder.Entity<User>().HasData(UserSeed.UserSeeder);
+            modelBuilder.Entity<Car>().HasData(CarSeed.CarSeeder);
         }
     }
 }
