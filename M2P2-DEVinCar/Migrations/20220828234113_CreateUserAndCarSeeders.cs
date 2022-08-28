@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace M2P2_DEVinCar.Migrations
 {
-    public partial class AddUserAndCarSeeder : Migration
+    public partial class CreateUserAndCarSeeders : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
