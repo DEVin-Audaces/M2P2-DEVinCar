@@ -93,8 +93,8 @@ namespace M2P2_DEVinCar.Controllers
 
                 if (address is null)
                     return NotFound();
-                
-                bool isAddressInDelivery = true;
+
+                bool isAddressInDelivery = await _context.Deliveries.AnyAsync(d => d.AddressId == addressId);
 
                 if (isAddressInDelivery)
                     return BadRequest();
