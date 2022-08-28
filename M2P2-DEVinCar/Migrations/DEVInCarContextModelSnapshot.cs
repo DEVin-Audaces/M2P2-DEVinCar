@@ -76,6 +76,68 @@ namespace M2P2_DEVinCar.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Cars");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Punto",
+                            SuggestedPrice = 38000.00m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Prisma",
+                            SuggestedPrice = 42000.00m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Fusca",
+                            SuggestedPrice = 10000.00m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Kombi",
+                            SuggestedPrice = 8000.00m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "TR-4",
+                            SuggestedPrice = 180000.00m
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Camaro",
+                            SuggestedPrice = 308000.00m
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Toro",
+                            SuggestedPrice = 138000.00m
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Pulse",
+                            SuggestedPrice = 88000.00m
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Nivus",
+                            SuggestedPrice = 78000.00m
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Hilux",
+                            SuggestedPrice = 238000.00m
+                        });
                 });
 
             modelBuilder.Entity("M2P2_DEVinCar.Models.City", b =>
@@ -380,7 +442,7 @@ namespace M2P2_DEVinCar.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("Date");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -400,6 +462,40 @@ namespace M2P2_DEVinCar.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BirthDate = new DateTime(1991, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "matheus.gevartosky@senai.com",
+                            Name = "Matheus Gevartosky",
+                            Password = "123456789"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BirthDate = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "rodrigo.raiche@senai.com",
+                            Name = "Rodrigo Raiche",
+                            Password = "123456789"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BirthDate = new DateTime(1993, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "lucas.reibnitz@senai.com",
+                            Name = "Lucas Reibnitz",
+                            Password = "123456789"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BirthDate = new DateTime(1992, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "alessandra.soares@senai.com",
+                            Name = "Alessandra Soares",
+                            Password = "123456789"
+                        });
                 });
 
             modelBuilder.Entity("M2P2_DEVinCar.Models.Address", b =>
